@@ -17,6 +17,7 @@ class InputViewController: UIViewController {
     @IBOutlet weak var titleTextField: UITextField!
     @IBOutlet weak var contentsTextView: UITextView!
     @IBOutlet weak var datePicker: UIDatePicker!
+    @IBOutlet weak var categorytextField: UITextField!
     
     let realm = try! Realm()
         var task: Task!
@@ -31,6 +32,7 @@ class InputViewController: UIViewController {
             titleTextField.text = task.title
             contentsTextView.text = task.contents
             datePicker.date = task.date
+            categorytextField.text = task.category
         }
 
     
@@ -38,11 +40,13 @@ class InputViewController: UIViewController {
             try! realm.write {
                 self.task.title = self.titleTextField.text!
                 self.task.contents = self.contentsTextView.text
+                self.task.category = self.categorytextField.text
                 self.task.date = self.datePicker.date
                 self.realm.add(self.task, update: .modified)
             }
             setNotification(task: task)   // 追加
             super.viewWillDisappear(animated)
+            
         }
 
         @objc func dismissKeyboard(){

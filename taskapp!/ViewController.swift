@@ -10,8 +10,10 @@ import UserNotifications// 追加
 
 import RealmSwift
 
-class ViewController:  UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ViewController:  UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
     @IBOutlet weak var tableview: UITableView!
+    @IBOutlet weak var searchbar: UISearchBar!
+    
     
     // Realmインスタンスを取得する
         let realm = try! Realm()  // ←追加
@@ -23,6 +25,7 @@ class ViewController:  UIViewController, UITableViewDelegate, UITableViewDataSou
                     super.viewDidLoad()
                     // Do any additional setup after loading the view.
                     tableview.delegate = self
+                    searchbar.delegate = self
                     tableview.dataSource = self
             }
 
@@ -51,11 +54,13 @@ class ViewController:  UIViewController, UITableViewDelegate, UITableViewDataSou
 
             // 各セルを選択した時に実行されるメソッド
             func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-            }
+                performSegue(withIdentifier: "cellSegue",sender: nil) // ←追加する
+                    }
 
             // セルが削除が可能なことを伝えるメソッド
             func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath)-> UITableViewCell.EditingStyle {
                 return .delete
+                
             }
 
             // Delete ボタンが押された時に呼ばれるメソッド
@@ -85,6 +90,13 @@ class ViewController:  UIViewController, UITableViewDelegate, UITableViewDataSou
                     }
                 }
             }
+    
+    // 入力画面から戻ってきた時に TableView を更新させる
+        override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            tableview.reloadData()
+        }
+    
     // segue で画面遷移する時に呼ばれる
         override func prepare(for segue: UIStoryboardSegue, sender: Any?){
             let inputViewController:InputViewController = segue.destination as! InputViewController
@@ -103,7 +115,19 @@ class ViewController:  UIViewController, UITableViewDelegate, UITableViewDataSou
                 inputViewController.task = task
             }
         }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        if searchbar.text == ""  {
+            taskArray = realm.objects(Task.self).sorted(byKeyPath: "date", ascending: true)
+        } else {
+            let predicate = NSPredicate(format: "category contains [c] %@", searchbar.text)
+            taskArray = realm.objects(Task.self).filter(predicate).sorted(byKeyPath: "date", ascending: true)
+        }
+        tableview.reloadData()
+    }
 }
     
+
+
 
 
