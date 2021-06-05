@@ -116,11 +116,11 @@ class ViewController:  UIViewController, UITableViewDelegate, UITableViewDataSou
             }
         }
     
-    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String){
         if searchbar.text == ""  {
             taskArray = realm.objects(Task.self).sorted(byKeyPath: "date", ascending: true)
         } else {
-            let predicate = NSPredicate(format: "category contains [c] %@", searchbar.text)
+            let predicate = NSPredicate(format: "category contains [c] %@", searchbar.text!)
             taskArray = realm.objects(Task.self).filter(predicate).sorted(byKeyPath: "date", ascending: true)
         }
         tableview.reloadData()

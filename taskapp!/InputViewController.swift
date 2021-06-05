@@ -40,7 +40,7 @@ class InputViewController: UIViewController {
             try! realm.write {
                 self.task.title = self.titleTextField.text!
                 self.task.contents = self.contentsTextView.text
-                self.task.category = self.categorytextField.text
+                self.task.category = self.categorytextField.text ?? ""
                 self.task.date = self.datePicker.date
                 self.realm.add(self.task, update: .modified)
             }
